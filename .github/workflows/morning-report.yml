@@ -1,0 +1,56 @@
+name: V14 Morning Report
+
+on:
+  schedule:
+    - cron: '0 23 * * 0-4'
+  workflow_dispatch:
+    inputs:
+      type:
+        description: '报告类型'
+        required: true
+        default: 'morning'
+        type: choice
+        options:
+          - morning
+          - afternoon
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch latest data
+        run: python fetch_data.py
+        continue-on-error: true
+
+      - name: Generate morning report
+        run: python v14_morning_push.py --type morning
+
+      - name: Prepare deploy directory
+        run: |
+          mkdir -p gh_pages
+          cp v14_morning_push.html gh_pages/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./gh_pages
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: 'Update morning report [skip ci]'
