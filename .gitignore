@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# WorkBuddy
+.workbuddy/
+
+# Generated reports (managed by CI)
+*.html
+deploy/
+deploy_morning/
+
+# Generated data files
+*.json
+v14_*_detail.csv
+v14_profit_ranking.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
